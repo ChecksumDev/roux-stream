@@ -26,11 +26,7 @@ comments at the same time.
  */
 
 use futures::{Stream, StreamExt};
-use roux::{
-    subreddit::responses::{SubmissionsData, SubredditCommentsData},
-    util::RouxError,
-    Subreddit,
-};
+use roux::{comment::CommentData, submission::SubmissionData, util::RouxError, Subreddit};
 use tokio::time::Duration;
 use tokio_retry::strategy::{jitter, ExponentialBackoff};
 
@@ -38,7 +34,7 @@ use roux_stream::StreamError;
 
 async fn submission_reader<S>(stream: &mut S) -> Result<(), StreamError<RouxError>>
 where
-    S: Stream<Item = Result<SubmissionsData, StreamError<RouxError>>> + Unpin,
+    S: Stream<Item = Result<SubmissionData, StreamError<RouxError>>> + Unpin,
 {
     while let Some(submission) = stream.next().await {
         let submission = submission?;
@@ -52,7 +48,7 @@ where
 
 async fn comment_reader<S>(stream: &mut S) -> Result<(), StreamError<RouxError>>
 where
-    S: Stream<Item = Result<SubredditCommentsData, StreamError<RouxError>>> + Unpin,
+    S: Stream<Item = Result<CommentData, StreamError<RouxError>>> + Unpin,
 {
     while let Some(comment) = stream.next().await {
         let comment = comment?;
